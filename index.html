@@ -432,7 +432,7 @@
     .cal-day.has-both {
       /* deprecated: both-slots days are now shown as split Day/Night colors (no red fill) */
       background: var(--surface2);
-      border-color: rgba(255,255,255,.10)
+      border-color: rgba(184,137,46,.15)
     }
 
     .cal-day.blocked {
@@ -609,10 +609,10 @@
     }
 
     .multi-date-wrap{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
-    .multi-date-chip{padding:6px 10px;border-radius:999px;border:1px solid rgba(184,137,46,.28);background:rgba(184,137,46,.10);color:rgba(255,255,255,.78);font-weight:600;font-size:12px}
-    .multi-date-chip button{margin-left:8px;border:0;background:transparent;color:rgba(255,255,255,.55);cursor:pointer;font-weight:900}
-    .multi-date-chip button:hover{color:#fff}
-    .muted-help{font-size:12px;color:rgba(255,255,255,.45);margin-top:6px}
+    .multi-date-chip{padding:6px 10px;border-radius:999px;border:1px solid rgba(184,137,46,.28);background:rgba(184,137,46,.10);color:#5a4a2f;font-weight:600;font-size:12px}
+    .multi-date-chip button{margin-left:8px;border:0;background:transparent;color:#999;cursor:pointer;font-weight:900}
+    .multi-date-chip button:hover{color:#333}
+    .muted-help{font-size:12px;color:#999;margin-top:6px}
 
     .balance-display {
       background: linear-gradient(135deg, rgba(34, 197, 94, .15), rgba(34, 197, 94, .05));
@@ -2185,24 +2185,19 @@
                     <label>Sound</label>
                     <div style="display:flex;gap:10px;margin-top:4px">
                       <button type="button" id="f-sound-right" onclick="setSoundMode('right')"
-                        style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);font-weight:600;cursor:pointer;transition:all .2s"
+                        style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(184,137,46,.2);background:rgba(184,137,46,.05);color:#7a6a4f;font-weight:600;cursor:pointer;transition:all .2s"
                         title="Sound system included">
                         ✔ Right
                       </button>
                       <button type="button" id="f-sound-wrong" onclick="setSoundMode('wrong')"
-                        style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);font-weight:600;cursor:pointer;transition:all .2s"
+                        style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(184,137,46,.2);background:rgba(184,137,46,.05);color:#7a6a4f;font-weight:600;cursor:pointer;transition:all .2s"
                         title="No sound system">
                         ✖ Wrong
                       </button>
-                      <button type="button" id="f-sound-thirdparty" onclick="setSoundMode('thirdparty')"
-                        style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);font-weight:600;cursor:pointer;transition:all .2s"
-                        title="Sound from a third party provider">
-                        🔗 3rd Party
-                      </button>
-                    </div>
-                    <!-- Third Party note (only shown when 3rd Party selected) -->
-                    <div id="fin-thirdparty" style="display:none;margin-top:10px">
-                      <input type="text" id="f-sound-note" class="form-group" placeholder="e.g. John's Sound System, contact: 98765…" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:var(--font);font-size:14px" />
+                      </div>
+                    <!-- Sound note (only shown when Wrong selected) -->
+                    <div id="fin-sound-note" style="display:none;margin-top:10px">
+                      <input type="text" id="f-sound-note" placeholder="Add a note about the sound issue…" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:var(--font);font-size:14px" />
                     </div>
                     <input type="hidden" id="f-sound" value="wrong" />
                   </div>
@@ -2386,7 +2381,7 @@
               <div class="summary-stats" id="summary-stats"></div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <button class="wa-share-btn"
-                  style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);color:var(--text-muted)"
+                  style="background:rgba(184,137,46,.04);border-color:rgba(184,137,46,.15);color:var(--text-muted)"
                   onclick="downloadSummaryImage()">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15"
                     fill="currentColor">
@@ -2525,13 +2520,13 @@
 
           <div class="form-group full"><label>SOUND</label>
             <div style="display:flex;gap:10px">
-              <button type="button" id="e-sound-right" onclick="setSoundModeEdit('right')" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);font-weight:600;cursor:pointer;transition:all .2s">✔ Right</button>
-              <button type="button" id="e-sound-wrong" onclick="setSoundModeEdit('wrong')" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);font-weight:600;cursor:pointer;transition:all .2s">✖ Wrong</button>
-              <button type="button" id="e-sound-thirdparty" onclick="setSoundModeEdit('thirdparty')" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);font-weight:600;cursor:pointer;transition:all .2s">🔗 3rd Party</button>
+              <button type="button" id="e-sound-right" onclick="setSoundModeEdit('right')" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(184,137,46,.2);background:rgba(184,137,46,.05);color:#7a6a4f;font-weight:600;cursor:pointer;transition:all .2s">✔ Right</button>
+              <button type="button" id="e-sound-wrong" onclick="setSoundModeEdit('wrong')" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(184,137,46,.2);background:rgba(184,137,46,.05);color:#7a6a4f;font-weight:600;cursor:pointer;transition:all .2s">✖ Wrong</button>
+              
             </div>
-            <!-- Third Party note (edit modal) -->
-            <div id="e-fin-thirdparty" style="display:none;margin-top:10px">
-              <input type="text" id="e-sound-note" placeholder="e.g. John's Sound System, contact: 98765…" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:var(--font);font-size:14px" />
+            <!-- Sound note (edit modal, only shown when Wrong selected) -->
+            <div id="e-fin-sound-note" style="display:none;margin-top:10px">
+              <input type="text" id="e-sound-note" placeholder="Add a note about the sound issue…" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:var(--font);font-size:14px" />
             </div>
             <input type="hidden" id="e-sound" value="wrong" />
           </div>
@@ -3611,33 +3606,27 @@ async function downloadSummaryImage() {
       document.getElementById('f-sound').value = mode;
       const right = document.getElementById('f-sound-right');
       const wrong = document.getElementById('f-sound-wrong');
-      const thirdparty = document.getElementById('f-sound-thirdparty');
       const activeStyle = 'flex:1;padding:10px;border-radius:8px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid #b8892e;background:rgba(184,137,46,.18);color:#b8892e';
-      const tpActiveStyle = 'flex:1;padding:10px;border-radius:8px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid #5b9bd5;background:rgba(91,155,213,.18);color:#5b9bd5';
-      const inactiveStyle = 'flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);font-weight:600;cursor:pointer;transition:all .2s';
+      const inactiveStyle = 'flex:1;padding:10px;border-radius:8px;border:1px solid rgba(184,137,46,.2);background:rgba(184,137,46,.05);color:#7a6a4f;font-weight:600;cursor:pointer;transition:all .2s';
       if (right) right.style.cssText = mode === 'right' ? activeStyle : inactiveStyle;
       if (wrong) wrong.style.cssText = mode === 'wrong' ? activeStyle : inactiveStyle;
-      if (thirdparty) thirdparty.style.cssText = mode === 'thirdparty' ? tpActiveStyle : inactiveStyle;
       document.getElementById('fin-simple').style.display = mode === 'wrong' ? '' : 'none';
       document.getElementById('fin-split').style.display = mode === 'right' ? '' : 'none';
-      const tpDiv = document.getElementById('fin-thirdparty');
-      if (tpDiv) tpDiv.style.display = mode === 'thirdparty' ? '' : 'none';
+      const noteDiv = document.getElementById('fin-sound-note');
+      if (noteDiv) noteDiv.style.display = mode === 'wrong' ? '' : 'none';
     }
     function setSoundModeEdit(mode) {
       document.getElementById('e-sound').value = mode;
       const right = document.getElementById('e-sound-right');
       const wrong = document.getElementById('e-sound-wrong');
-      const thirdparty = document.getElementById('e-sound-thirdparty');
       const activeStyle = 'flex:1;padding:10px;border-radius:8px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid #b8892e;background:rgba(184,137,46,.18);color:#b8892e';
-      const tpActiveStyle = 'flex:1;padding:10px;border-radius:8px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid #5b9bd5;background:rgba(91,155,213,.18);color:#5b9bd5';
-      const inactiveStyle = 'flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);font-weight:600;cursor:pointer;transition:all .2s';
+      const inactiveStyle = 'flex:1;padding:10px;border-radius:8px;border:1px solid rgba(184,137,46,.2);background:rgba(184,137,46,.05);color:#7a6a4f;font-weight:600;cursor:pointer;transition:all .2s';
       if (right) right.style.cssText = mode === 'right' ? activeStyle : inactiveStyle;
       if (wrong) wrong.style.cssText = mode === 'wrong' ? activeStyle : inactiveStyle;
-      if (thirdparty) thirdparty.style.cssText = mode === 'thirdparty' ? tpActiveStyle : inactiveStyle;
       document.getElementById('e-fin-simple').style.display = mode === 'wrong' ? '' : 'none';
       document.getElementById('e-fin-split').style.display = mode === 'right' ? '' : 'none';
-      const tpDiv = document.getElementById('e-fin-thirdparty');
-      if (tpDiv) tpDiv.style.display = mode === 'thirdparty' ? '' : 'none';
+      const noteDiv = document.getElementById('e-fin-sound-note');
+      if (noteDiv) noteDiv.style.display = mode === 'wrong' ? '' : 'none';
     }
 
     function calcBalance() {
