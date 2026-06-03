@@ -4117,7 +4117,7 @@ async function downloadSummaryImage() {
       try {
         const arItems = JSON.parse(b.addReqDesc || '[]');
         if (arItems.length) {
-          addReqSection = '\n📋 *Additional Requirements*\n' + arItems.map(i => '• ' + i.desc + ' – ₹' + (i.cost||0).toLocaleString('en-IN')).join('\n');
+          addReqSection = '\n📋 *Additional Requirements*\n' + arItems.map(i => '• ' + i.desc + ' – ₹' + (i.cost||0).toLocaleString('en-IN')).join('\n') + '\n';
         }
       } catch(e) {}
       const addReqTotal = b.addReqCost || 0;
@@ -4132,7 +4132,6 @@ async function downloadSummaryImage() {
           '🎤 Band: ₹' + (b.band || 0).toLocaleString('en-IN'),
           '🔊 Sound: ₹' + (b.soundCharges || 0).toLocaleString('en-IN'),
           addReqSection,
-          '',
           '💵 *Grand Total:* ₹' + grandTotal.toLocaleString('en-IN'),
           b.advance ? '✅ *Advance Paid:* ₹' + (b.advance || 0).toLocaleString('en-IN') : '',
           '⚠️ *Balance Due:* ₹' + Math.abs(grandBalance).toLocaleString('en-IN'),
@@ -4142,7 +4141,6 @@ async function downloadSummaryImage() {
         fin = [
           '💰 *Booking Amount:* ₹' + (b.total || 0).toLocaleString('en-IN'),
           addReqSection,
-          '',
           addReqTotal ? '💵 *Grand Total:* ₹' + grandTotal.toLocaleString('en-IN') : '',
           b.advance ? '✅ *Advance Received:* ₹' + (b.advance || 0).toLocaleString('en-IN') : '',
           '⚠️ *Balance Amount:* ₹' + Math.abs(grandBalance).toLocaleString('en-IN'),
