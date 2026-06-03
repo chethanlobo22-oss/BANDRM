@@ -21,6 +21,7 @@ const COLUMNS = [
     'soundcheck', 'crowd', 'theme', 'notes',
     'sound', 'band', 'soundCharges',
     'artistRate', 'artistPayment', 'soundChargeOnly', 'hideFromSound', 'soundNote',
+    'addReqDesc', 'addReqCost',
 ];
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
@@ -58,6 +59,7 @@ async function getAllRows(sheets) {
         obj.artistRate = parseFloat(obj.artistRate) || 0;
         obj.artistPayment = parseFloat(obj.artistPayment) || 0;
         obj.soundChargeOnly = parseFloat(obj.soundChargeOnly) || 0;
+        obj.addReqCost = parseFloat(obj.addReqCost) || 0;
         obj.hideFromSound = obj.hideFromSound === 'true' || obj.hideFromSound === true;
         return obj;
     });
