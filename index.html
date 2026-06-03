@@ -2205,7 +2205,13 @@
                   <!-- ADDITIONAL REQUIREMENTS -->
                   <div class="form-group full">
                     <label style="color:#b8892e;font-weight:700;letter-spacing:1px">ADDITIONAL REQUIREMENTS</label>
-                    <div id="f-addreq-rows" style="margin-top:8px">
+                    <div style="margin-top:8px">
+                      <button type="button" id="f-addreq-toggle" onclick="toggleAddReq('f')"
+                        style="padding:10px 20px;border-radius:8px;border:1px solid rgba(184,137,46,.2);background:rgba(184,137,46,.05);color:#7a6a4f;font-weight:600;cursor:pointer;transition:all .25s;font-size:13px">
+                        ➕ Add Requirements
+                      </button>
+                    </div>
+                    <div id="f-addreq-rows" style="margin-top:10px;display:none">
                       <div class="addreq-row" style="display:flex;gap:8px;margin-bottom:8px">
                         <input type="text" class="addreq-desc" placeholder="Description" style="flex:2;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:var(--font);font-size:14px" />
                         <input type="number" class="addreq-cost" placeholder="₹ Amount" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:var(--font);font-size:14px" />
@@ -2557,7 +2563,13 @@
           <!-- ADDITIONAL REQUIREMENTS (Edit) -->
           <div class="form-group full">
             <label style="color:#b8892e;font-weight:700;letter-spacing:1px">ADDITIONAL REQUIREMENTS</label>
-            <div id="e-addreq-rows" style="margin-top:8px">
+            <div style="margin-top:8px">
+              <button type="button" id="e-addreq-toggle" onclick="toggleAddReq('e')"
+                style="padding:10px 20px;border-radius:8px;border:1px solid rgba(184,137,46,.2);background:rgba(184,137,46,.05);color:#7a6a4f;font-weight:600;cursor:pointer;transition:all .25s;font-size:13px">
+                ➕ Add Requirements
+              </button>
+            </div>
+            <div id="e-addreq-rows" style="margin-top:10px;display:none">
               <div class="addreq-row" style="display:flex;gap:8px;margin-bottom:8px">
                 <input type="text" class="e-addreq-desc" placeholder="Description" style="flex:2;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:var(--font);font-size:14px" />
                 <input type="number" class="e-addreq-cost" placeholder="₹ Amount" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:var(--font);font-size:14px" />
@@ -3661,6 +3673,19 @@ async function downloadSummaryImage() {
     function totalAddReqCost(items) {
       return items.reduce((sum, i) => sum + (i.cost || 0), 0);
     }
+    function toggleAddReq(prefix) {
+      const rows = document.getElementById(prefix + '-addreq-rows');
+      const btn = document.getElementById(prefix + '-addreq-toggle');
+      if (rows.style.display === 'none') {
+        rows.style.display = 'block';
+        btn.style.cssText = 'padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;transition:all .25s;font-size:13px;border:1px solid #b8892e;background:rgba(184,137,46,.18);color:#b8892e';
+        btn.textContent = '✖ Hide Requirements';
+      } else {
+        rows.style.display = 'none';
+        btn.style.cssText = 'padding:10px 20px;border-radius:8px;border:1px solid rgba(184,137,46,.2);background:rgba(184,137,46,.05);color:#7a6a4f;font-weight:600;cursor:pointer;transition:all .25s;font-size:13px';
+        btn.textContent = '➕ Add Requirements';
+      }
+    }
     function populateAddReqs(containerId, items) {
       const rows = document.querySelectorAll('#' + containerId + ' .addreq-row');
       const parsed = (typeof items === 'string' && items) ? JSON.parse(items) : (Array.isArray(items) ? items : []);
@@ -4083,21 +4108,36 @@ async function downloadSummaryImage() {
 ].filter(Boolean).join('\n');
 
       let fin = '';
+      // Build additional requirements lines
+      let addReqLines = '';
+      try {
+        const arItems = JSON.parse(b.addReqDesc || '[]');
+        if (arItems.length) {
+          addReqLines = '\n📋 *Additional Requirements*\n' + arItems.map(i => '• ' + i.desc + ': Rs. ' + (i.cost||0).toLocaleString()).join('\n') + '\n💰 *Additional Total: Rs. ' + (b.addReqCost||0).toLocaleString() + '*';
+        }
+      } catch(e) {}
+      const grandTotal = (b.total || 0) + (b.addReqCost || 0);
+      const grandBalance = grandTotal - (b.advance || 0);
+
       if (b.sound === 'right' && b.band) {
         fin = [
           '💰 *Financial Summary*',
           '💸 Band Charges: Rs. ' + (b.band || 0).toLocaleString(),
           '🔊 Sound Charges: Rs. ' + (b.soundCharges || 0).toLocaleString(),
           '*Total: Rs. ' + (b.total || 0).toLocaleString() + '*',
+          addReqLines,
+          addReqLines ? '*Grand Total: Rs. ' + grandTotal.toLocaleString() + '*' : '',
           b.advance ? '✅ Advance Paid: Rs. ' + (b.advance || 0).toLocaleString() : '',
-          '⚠️ *Balance Due: Rs. ' + Math.abs(b.balance || 0).toLocaleString() + '*',
+          '⚠️ *Balance Due: Rs. ' + Math.abs(grandBalance).toLocaleString() + '*',
         ].filter(s => s !== null && s !== '').join('\n');
       } else if (b.total) {
         fin = [
           '💰 *Financial Summary*',
           '*Total: Rs. ' + (b.total || 0).toLocaleString() + '*',
+          addReqLines,
+          addReqLines ? '*Grand Total: Rs. ' + grandTotal.toLocaleString() + '*' : '',
           b.advance ? '✅ Advance Paid: Rs. ' + (b.advance || 0).toLocaleString() : '',
-          '⚠️ *Balance Due: Rs. ' + Math.abs(b.balance || 0).toLocaleString() + '*',
+          '⚠️ *Balance Due: Rs. ' + Math.abs(grandBalance).toLocaleString() + '*',
         ].filter(s => s !== null && s !== '').join('\n');
       }
 
@@ -4111,7 +4151,7 @@ async function downloadSummaryImage() {
         details,
         fin ? '\n' + fin : '',
         b.notes ? '\n📝 *Notes:* _' + b.notes + '_' : '',
-        (() => { try { const items = JSON.parse(b.addReqDesc || '[]'); if (!items.length) return ''; const lines = items.map(i => '• ' + i.desc + ': Rs. ' + (i.cost||0).toLocaleString()).join('\n'); return '\n📋 *Additional Requirements*\n' + lines + '\n💰 *Additional Total: Rs. ' + (b.addReqCost||0).toLocaleString() + '*'; } catch(e) { return ''; } })(),
+
         '',
         'Thank you for choosing *Rhythm Mates*.',
         'We look forward to delivering an unforgettable performance for you! 🎶',
@@ -4505,6 +4545,8 @@ function openWa(b, type, changedFields) {
       const eSoundNote = document.getElementById('e-sound-note');
       if (eSoundNote) eSoundNote.value = b.soundNote || '';
       populateAddReqs('e-addreq-rows', b.addReqDesc || '[]');
+      // Auto-show addreq section if data exists
+      try { const _ar = JSON.parse(b.addReqDesc || '[]'); if (_ar.length) toggleAddReq('e'); } catch(e) {}
       if ((b.sound || 'wrong') === 'right') {
         document.getElementById('e-band').value = b.band || 0;
         document.getElementById('e-sound-charges').value = b.soundCharges || 0;
