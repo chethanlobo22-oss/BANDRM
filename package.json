@@ -1,0 +1,12 @@
+{
+    "name": "rhythm-mates-band-manager",
+    "version": "1.0.0",
+    "private": true,
+    "description": "RHYTHM MATES Live Band Manager – booking management with Google Sheets backend",
+    "dependencies": {
+        "googleapis": "^140.0.0"
+    },
+    "engines": {
+        "node": ">=18"
+    }
+}
