@@ -3269,7 +3269,8 @@ async function downloadSummaryImage() {
       const gigs = bookings.filter(b => b.shift !== 'Blocked' && b.shift !== 'Event');
       const total = gigs.length;
       const totalAdv = gigs.reduce((s, b) => s + (parseFloat(b.advance) || 0), 0);
-      const totalPending = gigs.reduce((s, b) => s + (parseFloat(b.balance) || 0), 0);
+      const totalAddReq = gigs.reduce((s, b) => s + (parseFloat(b.addReqCost) || 0), 0);
+      const totalPending = gigs.reduce((s, b) => s + (parseFloat(b.balance) || 0) + (parseFloat(b.addReqCost) || 0), 0);
       // Internal-only stats (shown separately, not mixed into financials)
       const totalArtistPay = gigs.reduce((s, b) => s + (parseFloat(b.artistPayment) || parseFloat(b.artistRate) || 0), 0);
       const totalSoundInternal = gigs.reduce((s, b) => s + (parseFloat(b.soundChargeOnly) || 0), 0);
@@ -4073,12 +4074,16 @@ async function downloadSummaryImage() {
         const sections = [];
         if (nonFinLines.length) sections.push('*Updated Details:*\n' + nonFinLines.join('\n'));
         if (finChanged) {
+          const _addCost = b.addReqCost || 0;
+          const _grand = (b.total || 0) + _addCost;
+          const _bal = _grand - (b.advance || 0);
           const finLines = [
-            b.sound === 'right' && b.band ? '💸 Band Charges: Rs. ' + (b.band || 0).toLocaleString() : '',
-            b.sound === 'right' && b.soundCharges ? '🔊 Sound Charges: Rs. ' + (b.soundCharges || 0).toLocaleString() : '',
-            '💰 *Total: Rs. ' + (b.total || 0).toLocaleString() + '*',
-            b.advance ? '✅ Advance Paid: Rs. ' + (b.advance || 0).toLocaleString() : '',
-            '⚠️ *Balance Due: Rs. ' + Math.abs(b.balance || 0).toLocaleString() + '*',
+            b.sound === 'right' && b.band ? '🎤 Band: ₹' + (b.band || 0).toLocaleString('en-IN') : '',
+            b.sound === 'right' && b.soundCharges ? '🔊 Sound: ₹' + (b.soundCharges || 0).toLocaleString('en-IN') : '',
+            _addCost ? '📋 Additional: ₹' + _addCost.toLocaleString('en-IN') : '',
+            '💵 *Grand Total:* ₹' + _grand.toLocaleString('en-IN'),
+            b.advance ? '✅ *Advance:* ₹' + (b.advance || 0).toLocaleString('en-IN') : '',
+            '⚠️ *Balance Due:* ₹' + Math.abs(_bal).toLocaleString('en-IN'),
           ].filter(Boolean).join('\n');
           sections.push('*Revised Financials:*\n' + finLines);
         }
@@ -4103,41 +4108,44 @@ async function downloadSummaryImage() {
         '📅 *Date:* ' + d,
         b.shift ? '🕐 *Shift:* ' + b.shift : '',
         b.location ? '📍 *Venue:* ' + b.location : '',
-        b.env ? '🏛️ *Environment:* ' + b.env : '',
+        b.env ? '🏛️ *Setup:* ' + b.env : '',
         b.crowd ? '👥 *Crowd Size:* ~' + b.crowd + ' Guests' : '',
-].filter(Boolean).join('\n');
+      ].filter(Boolean).join('\n');
 
-      let fin = '';
-      // Build additional requirements lines
-      let addReqLines = '';
+      // Additional requirements
+      let addReqSection = '';
       try {
         const arItems = JSON.parse(b.addReqDesc || '[]');
         if (arItems.length) {
-          addReqLines = '\n📋 *Additional Requirements*\n' + arItems.map(i => '• ' + i.desc + ': Rs. ' + (i.cost||0).toLocaleString()).join('\n') + '\n💰 *Additional Total: Rs. ' + (b.addReqCost||0).toLocaleString() + '*';
+          addReqSection = '\n📋 *Additional Requirements*\n' + arItems.map(i => '• ' + i.desc + ' – ₹' + (i.cost||0).toLocaleString('en-IN')).join('\n');
         }
       } catch(e) {}
-      const grandTotal = (b.total || 0) + (b.addReqCost || 0);
+      const addReqTotal = b.addReqCost || 0;
+      const grandTotal = (b.total || 0) + addReqTotal;
       const grandBalance = grandTotal - (b.advance || 0);
 
+      let fin = '';
       if (b.sound === 'right' && b.band) {
+        // WITH SOUNDS
         fin = [
-          '💰 *Financial Summary*',
-          '💸 Band Charges: Rs. ' + (b.band || 0).toLocaleString(),
-          '🔊 Sound Charges: Rs. ' + (b.soundCharges || 0).toLocaleString(),
-          '*Total: Rs. ' + (b.total || 0).toLocaleString() + '*',
-          addReqLines,
-          addReqLines ? '*Grand Total: Rs. ' + grandTotal.toLocaleString() + '*' : '',
-          b.advance ? '✅ Advance Paid: Rs. ' + (b.advance || 0).toLocaleString() : '',
-          '⚠️ *Balance Due: Rs. ' + Math.abs(grandBalance).toLocaleString() + '*',
+          '💰 *Booking Charges*',
+          '🎤 Band: ₹' + (b.band || 0).toLocaleString('en-IN'),
+          '🔊 Sound: ₹' + (b.soundCharges || 0).toLocaleString('en-IN'),
+          addReqSection,
+          '',
+          '💵 *Grand Total:* ₹' + grandTotal.toLocaleString('en-IN'),
+          b.advance ? '✅ *Advance Paid:* ₹' + (b.advance || 0).toLocaleString('en-IN') : '',
+          '⚠️ *Balance Due:* ₹' + Math.abs(grandBalance).toLocaleString('en-IN'),
         ].filter(s => s !== null && s !== '').join('\n');
       } else if (b.total) {
+        // WITHOUT SOUNDS
         fin = [
-          '💰 *Financial Summary*',
-          '*Total: Rs. ' + (b.total || 0).toLocaleString() + '*',
-          addReqLines,
-          addReqLines ? '*Grand Total: Rs. ' + grandTotal.toLocaleString() + '*' : '',
-          b.advance ? '✅ Advance Paid: Rs. ' + (b.advance || 0).toLocaleString() : '',
-          '⚠️ *Balance Due: Rs. ' + Math.abs(grandBalance).toLocaleString() + '*',
+          '💰 *Booking Amount:* ₹' + (b.total || 0).toLocaleString('en-IN'),
+          addReqSection,
+          '',
+          addReqTotal ? '💵 *Grand Total:* ₹' + grandTotal.toLocaleString('en-IN') : '',
+          b.advance ? '✅ *Advance Received:* ₹' + (b.advance || 0).toLocaleString('en-IN') : '',
+          '⚠️ *Balance Amount:* ₹' + Math.abs(grandBalance).toLocaleString('en-IN'),
         ].filter(s => s !== null && s !== '').join('\n');
       }
 
@@ -4151,7 +4159,6 @@ async function downloadSummaryImage() {
         details,
         fin ? '\n' + fin : '',
         b.notes ? '\n📝 *Notes:* _' + b.notes + '_' : '',
-
         '',
         'Thank you for choosing *Rhythm Mates*.',
         'We look forward to delivering an unforgettable performance for you! 🎶',
